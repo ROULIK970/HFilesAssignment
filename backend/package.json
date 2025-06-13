@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "HFilesAssignment",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec babel-node index.js"
+  },
+  "author": "Pritish",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.27.2",
+    "@babel/core": "^7.27.4",
+    "@babel/node": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  },
+  "babel":{
+    "presets":["@babel/preset-env"]
+  }
+}
