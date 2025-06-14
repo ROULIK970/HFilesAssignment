@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
 
 const img =
   "https://static.vecteezy.com/system/resources/previews/036/280/651/original/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
@@ -44,7 +46,7 @@ const userSchema = new Schema(
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  this.password = await bcrypt(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 

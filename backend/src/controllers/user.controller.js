@@ -9,8 +9,7 @@ const registerUser = asyncHandler(async(req,res) =>{
   const { fullName, email, phoneNumber, gender, password } = req.body;
 
   //validate for no empty input for required fields
-  if (
-    ![fullName, email, phoneNumber, gender, password].some(
+  if ([fullName, email, phoneNumber, gender, password].some(
       (field) => field.trim() === ""
     )
   ) {
@@ -19,21 +18,22 @@ const registerUser = asyncHandler(async(req,res) =>{
 
   //check if user exist
   const existedUser = await User.findOne({ email });
+  
   if (existedUser) {
     throw new ApiError(409, "User with email already exist!");
   }
-
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
+ 
   //check if avatar exist
   //upload avatar on cloudinary
   let avatarUrl = undefined;
 
   if (avatarLocalPath) {
     const avatar = await uploadOnCloudinary(avatarLocalPath);
+    
     avatarUrl = avatar?.url;
   }
   //save in database
-
   const user = await User.create({
     fullName,
     email,
