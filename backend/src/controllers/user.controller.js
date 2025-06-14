@@ -4,6 +4,17 @@ import {ApiResponse} from "../utils/ApiResponse.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { User } from "../models/user.model.js"
 
+
+const generateAccessToken = async(userId)=>{
+try {
+   const user = await User.findById(userId)
+   const accessToken =  user.generateAccessToken()
+   return {accessToken}
+} catch (error) {
+   throw new ApiError(500, "Something went wrong when generating accessToken")
+}
+}
+
 const registerUser = asyncHandler(async(req,res) =>{
   //get user details from frontend
   const { fullName, email, phoneNumber, gender, password } = req.body;
@@ -57,4 +68,116 @@ const registerUser = asyncHandler(async(req,res) =>{
 })
 
 
-export {registerUser}
+const loginUser = asyncHandler(async(req,res)=>{
+    const {email, password} = req.body
+
+    if(!email){
+      throw new ApiError(400, "Email or Password is required!")
+    }
+
+   const user = await User.findOne({email})
+
+   if(!user){
+      throw new ApiError(404, "User does not exist!")
+   }
+
+   const isPasswordValid = await user.isPasswordCorrect(password)
+
+   if(!isPasswordValid){
+      throw new ApiError(401, "Email or Password invalid")
+   }
+
+   const {accessToken} = await generateAccessToken(user._id)
+
+   const loggedInUser = await User.findById(user._id).select("-password")
+   
+   const options = {
+      httpOnly:true
+   }
+
+
+   res
+   .status(200)
+   .cookie("accessToken", accessToken, options)
+   .json(new ApiResponse(200, loggedInUser, "Logged In Successfully!"))
+})
+
+
+const logoutUser = asyncHandler((req,res) =>{
+   
+   const options ={
+      httpOnly:true
+   }
+
+   res
+   .status(200)
+   .clearCookie("accessToken", options)
+   .json(new ApiResponse(200, {}, "User logged out successfully"))
+})
+
+
+const updateUserAvatar = asyncHandler(async (req, res) => {
+  const avatarLocalPath = req.files?.path;
+
+  if (!avatarLocalPath) {
+    throw new ApiError(400, "Avatar file is missing!");
+  }
+
+  const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+  if (!avatar) {
+    throw new ApiError(400, "Error while uploading avatar to cloudinary!");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        avatar: avatar.url,
+      },
+    },
+    { new: true }
+  ).select("-password");
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, user, "Avatar updated sucessfully!"));
+});
+
+
+const updateAccountDetails = asyncHandler(async (req, res) => {
+  const { fullName, email } = req.body;
+
+  if (!fullName || !email || !phoneNumber) {
+    throw new ApiError(400, "All fields are required");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        fullName,
+        email,
+        phoneNumber
+      },
+    },
+    {
+      new: true,
+    }
+  ).select("-password");
+
+  if (!user) {
+    throw new ApiError(500, "Account details failed to update!");
+  }
+
+  res
+    .status(201)
+    .json(new ApiResponse(200, user, "Account details updated successfully!"));
+});
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  updateUserAvatar,
+  updateAccountDetails,
+};
