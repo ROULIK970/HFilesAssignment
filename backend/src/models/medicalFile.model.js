@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
 
 
 
@@ -27,10 +29,6 @@ const medicalFileSchema = new Schema(
       required: true,
     },
     fileURL: {
-      type: String,
-      required: true,
-    },
-    originalName: {
       type: String,
       required: true,
     },
