@@ -7,5 +7,5 @@
 **wrote user and video models
 **added methods to userSchema like hasshing password by bcrypt, generating accessToken by JWT, checking if password is correct
 **configured cloudinary, wrote multer middleware for image and files upload
-
+**configured routes setup and controller
  -->
