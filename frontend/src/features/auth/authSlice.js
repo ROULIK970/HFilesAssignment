@@ -1,13 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { useSelector } from "react-redux";
+
+const BASE_URL = "https://hfilesassignment.onrender.com/api/v1/users";
 
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/register",
+        `${BASE_URL}/register`,
         formData,
         {
           headers: {
@@ -33,7 +34,7 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/login",
+        `${BASE_URL}/login`,
         credentials,
         {
           headers: {
@@ -58,7 +59,7 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/logout",
+        `${BASE_URL}/logout`,
         {},
         { withCredentials: true }
       );
@@ -77,7 +78,7 @@ export const updateAvatar = createAsyncThunk(
   async (avatarFormData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/update-avatar",
+        `${BASE_URL}/update-avatar`,
         avatarFormData,
         {
           headers: {
@@ -102,7 +103,7 @@ export const updateUserDetails = createAsyncThunk(
   async (details, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/update-account-details",
+        `${BASE_URL}/update-account-details`,
         details,
         {
           withCredentials: true,

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const BASE_URL = "http://localhost:8000/api/v1/files";
+const BASE_URL = "https://hfilesassignment.onrender.com/api/v1/files";
 
 
 export const uploadMedicalFile = createAsyncThunk(
