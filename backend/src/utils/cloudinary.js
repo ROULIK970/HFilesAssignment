@@ -13,7 +13,7 @@ export const uploadOnCloudinary = async (localFilePath) => {
     if (!localFilePath) return null
     //upload file on cloudinary
     const res = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto",
+      resource_type: "raw",
       folder:"healthFiles",
     });
     console.log("File uploaded succesfully!", res.url);

@@ -104,7 +104,6 @@ const loginUser = asyncHandler(async(req,res)=>{
 
 
 const logoutUser = asyncHandler((req,res) =>{
-   
    const options ={
       httpOnly:true
    }
@@ -117,7 +116,9 @@ const logoutUser = asyncHandler((req,res) =>{
 
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
-  const avatarLocalPath = req.files?.path;
+
+  const avatarLocalPath = req.files?.avatar?.[0]?.path;
+  console.log(avatarLocalPath)
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is missing!");
@@ -146,17 +147,21 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
-  const { fullName, email } = req.body;
+  console.log("update controller")
+  const { phoneNumber, email } = req.body;
+  console.log(phoneNumber)
 
-  if (!fullName || !email || !phoneNumber) {
-    throw new ApiError(400, "All fields are required");
+  if (!email && !phoneNumber) {
+    throw new ApiError(
+      400,
+      "At least one field (email or phone number) is required to update."
+    );
   }
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {
       $set: {
-        fullName,
         email,
         phoneNumber
       },
@@ -174,6 +179,8 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(200, user, "Account details updated successfully!"));
 });
+
+
 export {
   registerUser,
   loginUser,

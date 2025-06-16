@@ -26,7 +26,18 @@ router.route("/login").post(loginUser)
 
 //secured routes
 router.route("/logout").post(verifyJWT, logoutUser);
-router.route("/update-avatar").post(verifyJWT, updateUserAvatar);
+
+router.route("/update-avatar").post(
+    verifyJWT, 
+    upload.fields([
+        {
+            name:"avatar",
+            maxCount:1
+        }
+    ]), 
+    updateUserAvatar);
+
+
 router.route("/update-account-details").post(verifyJWT, updateAccountDetails);
 
 export default router
